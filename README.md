@@ -1,5 +1,14 @@
 # Waypaper
 
+> [!NOTE]
+> This is a fork of [Waypaper](https://github.com/anufrievroman/waypaper)
+> Please consider visiting the original repository to star and support the project.
+
+What was added:
+- Synchronization of wallpaper with `swaylock` lockscreen
+
+## About
+
 GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils`, `hyprpaper`, `mpvpaper`, `xwallpaper` and `feh`. See [demo](https://www.youtube.com/watch?v=O9OL7iH_KVY) and [documentation](https://anufrievroman.gitbook.io/waypaper).
 
 ![screenshot](screen.jpg)
