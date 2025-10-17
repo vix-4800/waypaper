@@ -388,6 +388,12 @@ class App(Gtk.Window):
         self.zen_mode_checkbox.connect("toggled", self.on_zen_mode_toggled)
         self.menu.append(self.zen_mode_checkbox)
 
+        # Create swaylock sync toggle:
+        self.swaylock_checkbox = Gtk.CheckMenuItem(label="Sync with swaylock")
+        self.swaylock_checkbox.set_active(self.cf.update_swaylock)
+        self.swaylock_checkbox.connect("toggled", self.on_swaylock_toggled)
+        self.menu.append(self.swaylock_checkbox)
+
         self.menu.show_all()
 
     def on_options_button_clicked(self, widget) -> None:
@@ -779,6 +785,11 @@ class App(Gtk.Window):
         """Toggle show image relative path in image tooltip"""
         self.cf.show_path_in_tooltip = not self.cf.show_path_in_tooltip
         threading.Thread(target=self.process_images).start()
+
+    def on_swaylock_toggled(self, toggle) -> None:
+        """Toggle swaylock synchronization"""
+        self.cf.update_swaylock = not self.cf.update_swaylock
+        self.cf.save()
 
     def on_fill_option_changed(self, combo) -> None:
         """Save fill parameter when it was changed"""

@@ -322,6 +322,35 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
                 retry_counter += 1
 
 
+def update_swaylock_config(image_path: Path, cf: Config):
+    """Update swaylock config to use the same wallpaper"""
+    if not cf.update_swaylock:
+        return
+
+    try:
+        config_path = cf.swaylock_config
+
+        # Read existing config if it exists
+        lines = []
+        if config_path.exists():
+            with open(config_path, "r") as f:
+                lines = f.readlines()
+
+        # Remove old image line if exists
+        lines = [line for line in lines if not line.strip().startswith("image=")]
+
+        # Add new image line
+        lines.append(f"image={image_path}\n")
+
+        # Write back to config
+        with open(config_path, "w") as f:
+            f.writelines(lines)
+
+        print(f"Updated swaylock config with image: {image_path}")
+    except Exception as e:
+        print(f"Error updating swaylock config: {e}")
+
+
 def change_wallpaper(image_path: Path, cf: Config, monitor: str):
     """Run system commands to change the wallpaper depending on the backend"""
 
@@ -349,6 +378,8 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
         if cf.backend != "none":
             filename = Path(image_path).resolve().name
             print(f"Sent {cf.backend} command to set {filename} on {monitor} display\n")
+
+        update_swaylock_config(image_path, cf)
 
         # Run a post command:
         if cf.post_command and cf.use_post_command:

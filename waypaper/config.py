@@ -63,6 +63,8 @@ class Config:
         self.use_xdg_state = False
         self.use_post_command = True
         self.show_path_in_tooltip = True
+        self.swaylock_config = self.home_path / ".config/swaylock/config"
+        self.update_swaylock = False
 
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
@@ -155,6 +157,12 @@ class Config:
         self.keybindings_file = pathlib.Path(
             config.get("Settings", "keybindings", fallback=self.keybindings_file)
         ).expanduser()
+        self.swaylock_config = pathlib.Path(
+            config.get("Settings", "swaylock_config", fallback=self.swaylock_config)
+        ).expanduser()
+        self.update_swaylock = config.getboolean(
+            "Settings", "update_swaylock", fallback=self.update_swaylock
+        )
 
         # Read and convert strings representing lists and paths:
         monitors_str = config.get(
@@ -311,6 +319,10 @@ class Config:
         config.set("Settings", "use_xdg_state", str(self.use_xdg_state))
         config.set("Settings", "stylesheet", str(self.style_file))
         config.set("Settings", "keybindings", self.shorten_path(self.keybindings_file))
+        config.set(
+            "Settings", "swaylock_config", self.shorten_path(self.swaylock_config)
+        )
+        config.set("Settings", "update_swaylock", str(self.update_swaylock))
 
         try:
             with open(self.config_file, "w") as configfile:
