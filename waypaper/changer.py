@@ -420,14 +420,26 @@ def update_regreet_config(image_path: Path, cf: Config):
         with open(temp_file, "w") as f:
             f.writelines(new_lines)
 
-        # Use sudo to copy the file
-        result = subprocess.run(
-            ["sudo", "cp", str(temp_file), str(config_path)],
-            capture_output=True,
-            text=True,
+        # Try pkexec first, fallback to sudo
+        result = None
+
+        pkexec_available = (
+            subprocess.run(["which", "pkexec"], capture_output=True).returncode == 0
         )
 
-        # Clean up temp file
+        if pkexec_available:
+            result = subprocess.run(
+                ["pkexec", "cp", str(temp_file), str(config_path)],
+                capture_output=True,
+                text=True,
+            )
+        else:
+            result = subprocess.run(
+                ["sudo", "cp", str(temp_file), str(config_path)],
+                capture_output=True,
+                text=True,
+            )
+
         temp_file.unlink(missing_ok=True)
 
         if result.returncode == 0:
