@@ -2,8 +2,8 @@
 
 import subprocess
 import time
-from typing import Optional
 from pathlib import Path
+from typing import Optional
 
 from waypaper.config import Config
 from waypaper.options import get_monitor_names_with_hyprctl
@@ -12,7 +12,7 @@ from waypaper.options import get_monitor_names_with_hyprctl
 def find_process_pid(command: str) -> Optional[int]:
     """Find the PID of the process matching the exact command"""
     try:
-        result = subprocess.run(['ps', 'aux'], stdout=subprocess.PIPE, text=True)
+        result = subprocess.run(["ps", "aux"], stdout=subprocess.PIPE, text=True)
         processes = result.stdout.splitlines()
         for process in processes:
             if command in process:
@@ -29,7 +29,7 @@ def seek_and_destroy(process: str, monitor: str = "All"):
     # Kill all process instances if we want to set for all monitors:
     if monitor == "All":
         try:
-            subprocess.check_output(["pgrep", f"{process}"], encoding='utf-8')
+            subprocess.check_output(["pgrep", f"{process}"], encoding="utf-8")
             subprocess.Popen(["killall", f"{process}"])
             time.sleep(0.1)
             print(f"Killed all previous instances of {process}")
@@ -47,9 +47,9 @@ def seek_and_destroy(process: str, monitor: str = "All"):
         else:
             return
         try:
-            subprocess.run(['kill', '-9', str(pid)], check=True)
+            subprocess.run(["kill", "-9", str(pid)], check=True)
             print(f"Detected {process} on {monitor} and killed it")
-        except Exception as e:
+        except Exception:
             pass
 
 
@@ -58,7 +58,7 @@ def change_with_swaybg(image_path: Path, cf: Config, monitor: str):
 
     # Check pid of current swaybg process:
     if monitor == "All":
-        pid = find_process_pid(f"swaybg")
+        pid = find_process_pid("swaybg")
     else:
         pid = find_process_pid(f"swaybg -o {monitor}")
 
@@ -74,40 +74,55 @@ def change_with_swaybg(image_path: Path, cf: Config, monitor: str):
     # Kill previous swaybg process once new wallpaper is set:
     if pid:
         time.sleep(0.2)
-        subprocess.run(['kill', '-9', str(pid)], check=True)
+        subprocess.run(["kill", "-9", str(pid)], check=True)
 
 
 def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with mpvpaper backend"""
 
     fill_types = {
-            "fill": "panscan=1.0",
-            "fit": "panscan=0.0",
-            "center": "",
-            "stretch": "--keepaspect=no",
-            "tile": "",
-            }
+        "fill": "panscan=1.0",
+        "fit": "panscan=0.0",
+        "center": "",
+        "stretch": "--keepaspect=no",
+        "tile": "",
+    }
     fill = fill_types[cf.fill_option.lower()]
 
     # If mpvpaper is already active on given monitor, try to call that process in that socket:
     try:
-        subprocess.check_output(["pgrep", "-f", f"socket-{monitor}"], encoding='utf-8')
+        subprocess.check_output(["pgrep", "-f", f"socket-{monitor}"], encoding="utf-8")
         time.sleep(0.2)
-        print(f"Detected running mpvpaper on {monitor}, now trying to call mpvpaper socket")
-        subprocess.Popen(f"echo 'loadfile \"{image_path}\"' | socat - /tmp/mpv-socket-{monitor}", shell=True)
+        print(
+            f"Detected running mpvpaper on {monitor}, now trying to call mpvpaper socket"
+        )
+        subprocess.Popen(
+            f"echo 'loadfile \"{image_path}\"' | socat - /tmp/mpv-socket-{monitor}",
+            shell=True,
+        )
 
     # If mpvpaper is not running, create a new process in a new socket:
     except subprocess.CalledProcessError:
         print("Detected no running mpvpaper, starting new mpvpaper process")
         command = ["mpvpaper", "--fork"]
         if cf.mpvpaper_sound:
-            command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} {cf.mpvpaper_options} loop {fill} --background-color='{cf.color}'"])
+            command.extend(
+                [
+                    "-o",
+                    f"input-ipc-server=/tmp/mpv-socket-{monitor} {cf.mpvpaper_options} loop {fill} --background-color='{cf.color}'",
+                ]
+            )
         else:
-            command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} {cf.mpvpaper_options} loop {fill} --mute=yes --background-color='{cf.color}'"])
+            command.extend(
+                [
+                    "-o",
+                    f"input-ipc-server=/tmp/mpv-socket-{monitor} {cf.mpvpaper_options} loop {fill} --mute=yes --background-color='{cf.color}'",
+                ]
+            )
 
         # Specify the monitor:
         if monitor == "All":
-            command.extend('*')
+            command.extend("*")
         else:
             command.extend([monitor])
 
@@ -122,13 +137,13 @@ def change_with_gslapper(image_path: Path, cf: Config, monitor: str):
 
     # Map waypaper fill options to gSlapper options (using updated gSlapper capabilities):
     fill_options = {
-        "fill": "panscan=1.0",      # Full screen coverage
-        "fit": "panscan=1.0",       # As you specified for proper video fitting  
-        "center": "original",       # Native resolution
-        "stretch": "stretch",       # New gSlapper stretch support
-        "tile": "panscan=1.0"       # Tiled behavior (using full coverage)
+        "fill": "panscan=1.0",  # Full screen coverage
+        "fit": "panscan=1.0",  # As you specified for proper video fitting
+        "center": "original",  # Native resolution
+        "stretch": "stretch",  # New gSlapper stretch support
+        "tile": "panscan=1.0",  # Tiled behavior (using full coverage)
     }
-    
+
     # Get the gSlapper option for current fill setting:
     gslapper_fill = fill_options.get(cf.fill_option.lower(), "panscan=1.0")
     print(f"gSlapper fill option: {cf.fill_option} -> {gslapper_fill}")
@@ -138,32 +153,32 @@ def change_with_gslapper(image_path: Path, cf: Config, monitor: str):
 
     # Build gSlapper command with proper options:
     command = ["gslapper", "--fork"]
-    
+
     # Build options list:
     options = []
     options.append("loop")  # Always loop videos
     options.append(gslapper_fill)  # Add the fill/scaling option
-    
+
     if not cf.mpvpaper_sound:  # If sound is OFF in UI
         options.append("no-audio")
-    
+
     # Add user's custom options if any:
     if cf.mpvpaper_options.strip():
         options.append(cf.mpvpaper_options.strip())
-    
+
     # Build options string:
     if options:
         command.extend(["-o", " ".join(options)])
-    
+
     # Specify the monitor:
     if monitor == "All":
-        command.append('*')
+        command.append("*")
     else:
         command.append(monitor)
-    
+
     # Add the image/video path:
     command.append(str(image_path))
-    
+
     print(f"gSlapper command: {command}")
     subprocess.Popen(command)
 
@@ -176,24 +191,26 @@ def change_with_swww(image_path: Path, cf: Config, monitor: str):
     seek_and_destroy("hyprpaper")
 
     fill_types = {
-            "fill": "crop",
-            "fit": "fit",
-            "center": "no",
-            "stretch": "crop",
-            "tile": "no",
-            }
+        "fill": "crop",
+        "fit": "fit",
+        "center": "no",
+        "stretch": "crop",
+        "tile": "no",
+    }
     fill = fill_types[cf.fill_option.lower()]
 
     # Check if swww-daemon is already running. If not, launch it:
     try:
-        subprocess.check_output(["pgrep", "swww-daemon"], encoding='utf-8')
+        subprocess.check_output(["pgrep", "swww-daemon"], encoding="utf-8")
     except subprocess.CalledProcessError:
         subprocess.Popen(["swww-daemon"])
         print("Launched swww-daemon")
 
     # Get rid of this in future when swww updates everywhere:
     version_p = subprocess.run(["swww", "-V"], capture_output=True, text=True)
-    swww_version = [int(x) for x in version_p.stdout.strip().split("-")[0].split(" ")[1].split(".")]
+    swww_version = [
+        int(x) for x in version_p.stdout.strip().split("-")[0].split(" ")[1].split(".")
+    ]
 
     command = ["swww", "img", image_path]
     command.extend(["--resize", fill])
@@ -215,27 +232,28 @@ def change_with_feh(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with feh backend"""
 
     fill_types = {
-            "fill": "--bg-fill",
-            "fit": "--bg-max",
-            "center": "--bg-center",
-            "stretch": "--bg-scale",
-            "tile": "--bg-tile",
-            }
+        "fill": "--bg-fill",
+        "fit": "--bg-max",
+        "center": "--bg-center",
+        "stretch": "--bg-scale",
+        "tile": "--bg-tile",
+    }
     fill = fill_types[cf.fill_option.lower()]
     command = ["feh", fill, "--image-bg", cf.color]
     command.extend([str(image_path)])
     subprocess.Popen(command)
 
+
 def change_with_xwallpaper(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with xwallpaper backend"""
 
     fill_types = {
-            "fill": "--zoom",
-            "fit": "--maximize",
-            "center": "--center",
-            "stretch": "--stretch",
-            "tile": "--tile",
-            }
+        "fill": "--zoom",
+        "fit": "--maximize",
+        "center": "--center",
+        "stretch": "--stretch",
+        "tile": "--tile",
+    }
     fill = fill_types[cf.fill_option.lower()]
     # Since xwallpaper doesn't accept 'All', but 'all'
     if monitor == "All":
@@ -244,22 +262,23 @@ def change_with_xwallpaper(image_path: Path, cf: Config, monitor: str):
     command.extend([str(image_path)])
     subprocess.Popen(command)
 
+
 def change_with_wallutils(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with wallutils backend"""
     fill_types = {
-            "fill": "scale",
-            "fit": "scale",
-            "center": "center",
-            "stretch": "stretch",
-            "tile": "tile",
-            }
+        "fill": "scale",
+        "fit": "scale",
+        "center": "center",
+        "stretch": "stretch",
+        "tile": "tile",
+    }
     fill = fill_types[cf.fill_option.lower()]
     subprocess.Popen(["setwallpaper", "--mode", fill, image_path])
 
 
 def change_with_finder(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper on macOS"""
-    command = f"osascript -e 'tell application \"Finder\" to set desktop picture to POSIX file \"{image_path}\"'"
+    command = f'osascript -e \'tell application "Finder" to set desktop picture to POSIX file "{image_path}"\''
     subprocess.Popen(command, shell=True)
 
 
@@ -268,7 +287,7 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
 
     # Check if hyprpaper is already running, otherwise start it, and preload the wallpaper:
     try:
-        subprocess.check_output(["pgrep", "hyprpaper"], encoding='utf-8')
+        subprocess.check_output(["pgrep", "hyprpaper"], encoding="utf-8")
     except subprocess.CalledProcessError:
         subprocess.Popen(["hyprpaper"])
         time.sleep(1)
@@ -295,7 +314,9 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
             try:
                 subprocess.check_output(unload_command, encoding="utf-8").strip()
                 subprocess.check_output(preload_command, encoding="utf-8").strip()
-                result = subprocess.check_output(wallpaper_command, encoding="utf-8").strip()
+                result = subprocess.check_output(
+                    wallpaper_command, encoding="utf-8"
+                ).strip()
                 time.sleep(0.1)
             except Exception:
                 retry_counter += 1

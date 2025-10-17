@@ -1,19 +1,20 @@
 """Module with some of the common functions, like file and image operations"""
 
+import hashlib
 import os
-import gi
 import random
 import shutil
-import imageio
-import hashlib
 from pathlib import Path
 from typing import List
+
+import gi
+import imageio
 from PIL import Image
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
+from gi.repository import GdkPixbuf
 
-from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS, VIDEO_EXTENSIONS
+from waypaper.options import BACKEND_OPTIONS, IMAGE_EXTENSIONS, VIDEO_EXTENSIONS
 
 
 def has_image_extension(file_path: str, backend: str) -> bool:
@@ -23,12 +24,14 @@ def has_image_extension(file_path: str, backend: str) -> bool:
     return ext in image_extensions
 
 
-def get_image_paths(backend: str,
-                    folder_list: list[Path],
-                    include_subfolders: bool = False,
-                    include_all_subfolders: bool = False,
-                    include_hidden: bool = False,
-                    only_gifs: bool = False) -> list[str]:
+def get_image_paths(
+    backend: str,
+    folder_list: list[Path],
+    include_subfolders: bool = False,
+    include_all_subfolders: bool = False,
+    include_hidden: bool = False,
+    only_gifs: bool = False,
+) -> list[str]:
     """Get a list of file paths depending on the filters that were requested."""
 
     image_path_list: list[str] = []
@@ -37,7 +40,7 @@ def get_image_paths(backend: str,
 
             # Remove hidden files from consideration:
             for directory in directories:
-                if directory.startswith('.') and not include_hidden:
+                if directory.startswith(".") and not include_hidden:
                     directories.remove(directory)
 
             # Remove subfolders from consideration:
@@ -52,17 +55,19 @@ def get_image_paths(backend: str,
 
             # Remove files that are not images from consideration:
             for image_name in files:
-                if image_name.startswith('.') and not include_hidden:
+                if image_name.startswith(".") and not include_hidden:
                     continue
                 if not has_image_extension(image_name, backend):
                     continue
-                if not image_name.casefold().endswith('.gif') and only_gifs:
+                if not image_name.casefold().endswith(".gif") and only_gifs:
                     continue
                 image_path_list.append(os.path.join(root, image_name))
     return image_path_list
 
 
-def get_image_name(full_path: str, base_folder_list: list[Path], include_path: bool) ->  str:
+def get_image_name(
+    full_path: str, base_folder_list: list[Path], include_path: bool
+) -> str:
     """Get image name that may or may not include parent folders"""
     full_path = Path(os.path.normpath(full_path)).absolute()
 
@@ -79,22 +84,30 @@ def get_image_name(full_path: str, base_folder_list: list[Path], include_path: b
         return str(Path(common_folder, full_path.relative_to(base_folder)))
 
 
-def get_random_file(backend: str,
-                    folder_list: list[Path],
-                    include_subfolders: bool,
-                    include_all_subfolders: bool,
-                    cache_dir: Path,
-                    include_hidden: bool = False) -> str | None:
+def get_random_file(
+    backend: str,
+    folder_list: list[Path],
+    include_subfolders: bool,
+    include_all_subfolders: bool,
+    cache_dir: Path,
+    include_hidden: bool = False,
+) -> str | None:
     """Pick a random file from the folder and update cache"""
     try:
         # Get all image paths from the folder:
-        image_paths = get_image_paths(backend, folder_list, include_subfolders, include_all_subfolders,
-                                      include_hidden, only_gifs=False)
+        image_paths = get_image_paths(
+            backend,
+            folder_list,
+            include_subfolders,
+            include_all_subfolders,
+            include_hidden,
+            only_gifs=False,
+        )
 
         # Read cache file with already used images:
         cache_file = cache_dir / "used_wallpapers.txt"
         if cache_file.exists():
-            with cache_file.open('r') as file:
+            with cache_file.open("r") as file:
                 used_images = [line.strip() for line in file.readlines()]
         # Create it if the file does not exists:
         else:
@@ -102,7 +115,9 @@ def get_random_file(backend: str,
             used_images = []
 
         # Pick a random image from unused images:
-        remaining_images = list(filter(lambda img: img not in set(used_images), image_paths))
+        remaining_images = list(
+            filter(lambda img: img not in set(used_images), image_paths)
+        )
         if remaining_images:
             random_image = random.choice(remaining_images)
             used_images.append(random_image)
@@ -111,9 +126,9 @@ def get_random_file(backend: str,
             used_images = [random_image]
 
         # Write the cache file:
-        with cache_file.open('w') as file:
+        with cache_file.open("w") as file:
             for img in used_images:
-                file.write(img + '\n')
+                file.write(img + "\n")
 
         return random_image
 
@@ -142,7 +157,10 @@ def check_installed_backends() -> List[str]:
 
 def get_cached_image_path(image_path: str, cache_dir: Path) -> Path:
     real_path_bytes = bytes(os.path.realpath(image_path), encoding="UTF-8")
-    return cache_dir / f"{hashlib.md5(real_path_bytes, usedforsecurity=False).hexdigest()}.png"
+    return (
+        cache_dir
+        / f"{hashlib.md5(real_path_bytes, usedforsecurity=False).hexdigest()}.png"
+    )
 
 
 def cache_image(image_path: str, cache_dir: Path) -> None:
@@ -172,18 +190,30 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
             has_alpha = img.has_transparency_data
             rowstride = img_width * (3 + int(has_alpha))
 
-            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, has_alpha, 8, img_width, img_height, rowstride)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(
+                data,
+                GdkPixbuf.Colorspace.RGB,
+                has_alpha,
+                8,
+                img_width,
+                img_height,
+                rowstride,
+            )
         else:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
         aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
         height = int(width / aspect_ratio)
-        scaled_pixbuf = pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+        scaled_pixbuf = pixbuf.scale_simple(
+            width, height, GdkPixbuf.InterpType.BILINEAR
+        )
         scaled_pixbuf.savev(str(cache_file), "png", [], [])
 
     # If image processing failed, create a black placeholder:
     except Exception as e:
         print(f"Could not generate preview for {os.path.basename(image_path)}")
         print(e)
-        black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, width, width*9/16)
+        black_pixbuf = GdkPixbuf.Pixbuf.new(
+            GdkPixbuf.Colorspace.RGB, True, 8, width, width * 9 / 16
+        )
         black_pixbuf.fill(0x0)
         black_pixbuf.savev(str(cache_file), "png", [], [])
