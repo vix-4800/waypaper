@@ -1,7 +1,7 @@
 # Waypaper
 
 > [!NOTE]
-> This is a fork of [Waypaper](https://github.com/anufrievroman/waypaper)
+> This is a fork of [Waypaper](https://github.com/anufrievroman/waypaper) by Anufriev Roman.
 > Please consider visiting the original repository to star and support the project.
 
 What was added:
@@ -69,6 +69,7 @@ Waypaper is available in an external repository owned by Solopasha. You can add 
 - `python-imageio-ffmpeg`
 - `python-screeninfo`
 - `python-platformdirs`
+- `swaylock` or `swaylock-effects` (only if you want to synchronize wallpaper with lockscreen)
 
 ## Usage
 
@@ -96,11 +97,4 @@ Feel free to propose PR and suggest the improvements. I'll appreciate help with 
 
 ## Support
 
-I am not a professional developer and work on open-source projects in my free time. If you'd like to support the development, consider donations via:
-
-- Cards and PayPal: [BuyMeACoffee](https://www.buymeacoffee.com/angryprofessor)
-- BTC `bc1qpkzmutdqfxkce34skt09vll97s5smpa0r2tyzj`
-- ETH `0x6f1Ce9cA181458Fc153a5f7cBF88044736C3b00C`
-- BNB `0x40f22c372758E35C905458cAF8BB17f51ac133d1`
-- LTC `ltc1qtu33qyv2xlzxda5mmrmk943zpksq8q75tuh85p`
-- XMR `4AHRhpNYUZcPVN78rbUWAzBuvMKQdpwStS5L3kjunnBMWWW2pjYBko1RUF6nQVpgQPdfAkM3jrEWrWKDHz1h4Ucd4gFCZ9j`
+If you like this project, please consider starring the [original repository](https://github.com/anufrievroman/waypaper) to support the development.
