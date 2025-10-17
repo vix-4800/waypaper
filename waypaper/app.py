@@ -394,6 +394,12 @@ class App(Gtk.Window):
         self.swaylock_checkbox.connect("toggled", self.on_swaylock_toggled)
         self.menu.append(self.swaylock_checkbox)
 
+        # Create greeter sync toggle:
+        self.greeter_checkbox = Gtk.CheckMenuItem(label="Sync with greeter (ReGreet)")
+        self.greeter_checkbox.set_active(self.cf.update_greeter)
+        self.greeter_checkbox.connect("toggled", self.on_greeter_toggled)
+        self.menu.append(self.greeter_checkbox)
+
         self.menu.show_all()
 
     def on_options_button_clicked(self, widget) -> None:
@@ -789,6 +795,13 @@ class App(Gtk.Window):
     def on_swaylock_toggled(self, toggle) -> None:
         """Toggle swaylock synchronization"""
         self.cf.update_swaylock = not self.cf.update_swaylock
+        self.cf.save()
+
+    def on_greeter_toggled(self, toggle) -> None:
+        """Toggle greeter synchronization"""
+        self.cf.update_greeter = not self.cf.update_greeter
+        if self.cf.update_greeter and self.cf.greeter_backend == "none":
+            self.cf.greeter_backend = "regreet"
         self.cf.save()
 
     def on_fill_option_changed(self, combo) -> None:

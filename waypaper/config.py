@@ -65,6 +65,9 @@ class Config:
         self.show_path_in_tooltip = True
         self.swaylock_config = self.home_path / ".config/swaylock/config"
         self.update_swaylock = False
+        self.greeter_backend = "none"
+        self.regreet_config = pathlib.Path("/etc/greetd/regreet.toml")
+        self.update_greeter = False
 
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
@@ -162,6 +165,15 @@ class Config:
         ).expanduser()
         self.update_swaylock = config.getboolean(
             "Settings", "update_swaylock", fallback=self.update_swaylock
+        )
+        self.greeter_backend = config.get(
+            "Settings", "greeter_backend", fallback=self.greeter_backend
+        )
+        self.regreet_config = pathlib.Path(
+            config.get("Settings", "regreet_config", fallback=self.regreet_config)
+        ).expanduser()
+        self.update_greeter = config.getboolean(
+            "Settings", "update_greeter", fallback=self.update_greeter
         )
 
         # Read and convert strings representing lists and paths:
@@ -323,6 +335,9 @@ class Config:
             "Settings", "swaylock_config", self.shorten_path(self.swaylock_config)
         )
         config.set("Settings", "update_swaylock", str(self.update_swaylock))
+        config.set("Settings", "greeter_backend", self.greeter_backend)
+        config.set("Settings", "regreet_config", str(self.regreet_config))
+        config.set("Settings", "update_greeter", str(self.update_greeter))
 
         try:
             with open(self.config_file, "w") as configfile:

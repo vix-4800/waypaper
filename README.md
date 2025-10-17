@@ -6,6 +6,7 @@
 
 What was added:
 - Synchronization of wallpaper with `swaylock` lockscreen
+- Synchronization of wallpaper with greeter (`ReGreet` for `greetd`)
 
 ## About
 
@@ -23,6 +24,7 @@ GUI wallpaper setter for Wayland and Xorg window managers. It works as a fronten
 - Works on Xorg (with `feh`, `xwallpaper` or `wallutils`)
 - Restores wallpaper after restart (`waypaper --restore`)
 - Synchronizes wallpapers with `swaylock` lockscreen
+- Synchronizes wallpapers with greeter - `ReGreet` for `greetd` (**Note** that this requires sudo permissions. You may be prompted for your password when changing wallpapers.)
 - Fast and minimal (315 kB)
 
 ## Installation

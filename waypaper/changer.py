@@ -1,5 +1,6 @@
 """Module that runs the system processes to change the wallpaper"""
 
+import os
 import subprocess
 import time
 from pathlib import Path
@@ -351,6 +352,93 @@ def update_swaylock_config(image_path: Path, cf: Config):
         print(f"Error updating swaylock config: {e}")
 
 
+def update_greeter_config(image_path: Path, cf: Config):
+    """Update greeter config to use the same wallpaper"""
+    if not cf.update_greeter or cf.greeter_backend == "none":
+        return
+
+    if cf.greeter_backend == "regreet":
+        update_regreet_config(image_path, cf)
+    # Future: add support for other greeters
+    # elif cf.greeter_backend == "sddm":
+    #     update_sddm_config(image_path, cf)
+    # elif cf.greeter_backend == "lightdm":
+    #     update_lightdm_config(image_path, cf)
+
+
+def update_regreet_config(image_path: Path, cf: Config):
+    """Update ReGreet (greetd) TOML config with new wallpaper"""
+    try:
+        config_path = cf.regreet_config
+
+        if not config_path.exists():
+            print(f"ReGreet config not found at {config_path}")
+            return
+
+        # Read the TOML file
+        with open(config_path, "r") as f:
+            lines = f.readlines()
+
+        # Find and update the background section
+        new_lines = []
+        in_background_section = False
+        path_updated = False
+
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+
+            # Check if we're entering background section
+            if stripped == "[background]":
+                in_background_section = True
+                new_lines.append(line)
+                continue
+
+            # Check if we're leaving background section
+            if (
+                in_background_section
+                and stripped.startswith("[")
+                and stripped != "[background]"
+            ):
+                in_background_section = False
+
+            # Update path in background section
+            if in_background_section and stripped.startswith("path"):
+                new_lines.append(f'path = "{image_path}"\n')
+                path_updated = True
+                continue
+
+            new_lines.append(line)
+
+        # If background section doesn't exist, add it
+        if not path_updated:
+            new_lines.append("\n[background]\n")
+            new_lines.append(f'path = "{image_path}"\n')
+            new_lines.append('fit = "Cover"\n')
+
+        # Write back using sudo since /etc requires root
+        temp_file = Path(f"/tmp/regreet_temp_{os.getpid()}.toml")
+        with open(temp_file, "w") as f:
+            f.writelines(new_lines)
+
+        # Use sudo to copy the file
+        result = subprocess.run(
+            ["sudo", "cp", str(temp_file), str(config_path)],
+            capture_output=True,
+            text=True,
+        )
+
+        # Clean up temp file
+        temp_file.unlink(missing_ok=True)
+
+        if result.returncode == 0:
+            print(f"Updated ReGreet config with image: {image_path}")
+        else:
+            print(f"Failed to update ReGreet config: {result.stderr}")
+
+    except Exception as e:
+        print(f"Error updating ReGreet config: {e}")
+
+
 def change_wallpaper(image_path: Path, cf: Config, monitor: str):
     """Run system commands to change the wallpaper depending on the backend"""
 
@@ -380,6 +468,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             print(f"Sent {cf.backend} command to set {filename} on {monitor} display\n")
 
         update_swaylock_config(image_path, cf)
+        update_greeter_config(image_path, cf)
 
         # Run a post command:
         if cf.post_command and cf.use_post_command:
