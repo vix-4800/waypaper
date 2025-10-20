@@ -38,7 +38,7 @@ Clone the repository and install using pip:
 ```bash
 git clone https://github.com/vix-4800/waypaper.git
 cd waypaper
-pip install .
+pipx install .
 ```
 
 ### Dependencies
