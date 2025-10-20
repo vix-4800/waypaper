@@ -8,7 +8,7 @@ class English:
     def __init__(self):
         self.msg_desc = "GUI wallpaper setter for Wayland and X11. It works as a frontend for feh, swaybg, wallutils, hyprpaper, mpvpaper, and swww."
         self.msg_info = (
-            "For more information, visit:\nhttps://github.com/anufrievroman/waypaper"
+            "For more information, visit:\nhttps://github.com/vix-4800/waypaper"
         )
 
         self.msg_arg_help = "print version of the program"
@@ -88,7 +88,7 @@ class English:
 class German:
     def __init__(self):
         self.msg_desc = "Grafisches Hintergrundbild-Auswahlwerkzeug für Wayland und X11. Es dient als Frontend für feh, swaybg, wallutils, hyprpaper, mpvpaper, und swww."
-        self.msg_info = "Weitere Informationen finden Sie unter:\nhttps://github.com/anufrievroman/waypaper"
+        self.msg_info = "Weitere Informationen finden Sie unter:\nhttps://github.com/vix-4800/waypaper"
 
         self.msg_arg_help = "gibt die Programmversion aus"
         self.msg_arg_fill = "legt fest, wie das Bild skaliert werden soll, um den gesamten Bildschirm auszufüllen"
@@ -168,7 +168,7 @@ class German:
 class French:
     def __init__(self):
         self.msg_desc = "Sélecteur de papier peint graphique pour Wayland et X11. Il fonctionne comme une interface pour feh, swaybg, wallutils, hyprpaper, mpvpaper, et swww."
-        self.msg_info = "Pour plus d'informations, visitez :\nhttps://github.com/anufrievroman/waypaper"
+        self.msg_info = "Pour plus d'informations, visitez :\nhttps://github.com/vix-4800/waypaper"
 
         self.msg_arg_help = "afficher la version du programme"
         self.msg_arg_fill = "spécifier comment remplir l'écran avec l'image choisie"
@@ -251,7 +251,7 @@ class French:
 class Polish:
     def __init__(self):
         self.msg_desc = "GUI narzędzie do ustawiania tapety dla Wayland i X11. Jest interfejsem dla feh, swaybg, wallutils, hyprpaper, mpvpaper i swww."
-        self.msg_info = "Aby dowiedzieć się więcej, odwiedź:\nhttps://github.com/anufrievroman/waypaper"
+        self.msg_info = "Aby dowiedzieć się więcej, odwiedź:\nhttps://github.com/vix-4800/waypaper"
 
         self.msg_arg_help = "pokaż wersję programu"
         self.msg_arg_fill = "ustaw jak wypełnić ekran wybranym obrazem"
@@ -335,7 +335,7 @@ class Polish:
 class Russian:
     def __init__(self):
         self.msg_desc = "Графический интерфейс для установки обоев на Wayland и X11. Работает как фронтенд для feh, swaybg, wallutils, hyprpaper, mpvpaper и swww."
-        self.msg_info = "Для получения дополнительной информации посетите:\nhttps://github.com/anufrievroman/waypaper"
+        self.msg_info = "Для получения дополнительной информации посетите:\nhttps://github.com/vix-4800/waypaper"
 
         self.msg_arg_help = "вывести версию программы"
         self.msg_arg_fill = "указать, как заполнить экран выбранным изображением"
@@ -410,7 +410,7 @@ class Russian:
 class Belarusian:
     def __init__(self):
         self.msg_desc = "Графічны інтэрфейс для ўстаноўкі шпалер на Wayland і X11. Працуе як фронтэнд для feh, swaybg, wallutils, hyprpaper, mpvpaper і swww."
-        self.msg_info = "Для атрымання дадатковай інфармацыі наведайце:\nhttps://github.com/anufrievroman/waypaper"
+        self.msg_info = "Для атрымання дадатковай інфармацыі наведайце:\nhttps://github.com/vix-4800/waypaper"
 
         self.msg_arg_help = "вывесці версію праграмы"
         self.msg_arg_fill = "пазначыць, як запоўніць экран абранай выявай"
@@ -492,7 +492,7 @@ class Chinese:
     def __init__(self):
         self.msg_desc = "Wayland 和 X11 的 GUI 壁纸设置器。它用作 feh、swaybg、hyprpaper、mpvpaper、wallutils 和 swww 的前端。"
         self.msg_info = (
-            "欲了解更多信息，请访问:\nhttps://github.com/anufrievroman/waypaper"
+            "欲了解更多信息，请访问:\nhttps://github.com/vix-4800/waypaper"
         )
 
         self.msg_arg_help = "版本信息"
@@ -569,7 +569,7 @@ class TraditionalChinese:
     def __init__(self):
         self.msg_desc = "Wayland 和 X11 的 GUI 壁紙選擇器。是能作為 feh、swaybg、wallutils、hyprpaper、mpvpaper 和 swww 的前端。"
         self.msg_info = (
-            "如要更多資訊, 請前往:\nhttps://github.com/anufrievroman/waypaper"
+            "如要更多資訊, 請前往:\nhttps://github.com/vix-4800/waypaper"
         )
 
         self.msg_arg_help = "版本"
@@ -646,7 +646,7 @@ class Spanish:
     def __init__(self):
         self.msg_desc = 'Cambiador de fondo de pantalla para "Wayland" y "X11". Trabaja como una interfaz gráfica para "feh", "swaybg", "wallutils", "swww" y "hyprpaper".'
         self.msg_info = (
-            "Para más información, visita:\nhttps://github.com/anufrievroman/waypaper"
+            "Para más información, visita:\nhttps://github.com/vix-4800/waypaper"
         )
 
         self.msg_arg_help = "imprime la versión del programa"
@@ -737,7 +737,7 @@ class Turkish:
     def __init__(self):
         self.msg_desc = "Wayland ve X11 için duvar kağıdı ayarlayıcı arayüz. feh, swaybg, wallutils, hyprpaper, mpvpaper ve swww için ön yüz sağlar."
         self.msg_info = (
-            "Daha fazla bilgi için:\nhttps://github.com/anufrievroman/waypaper"
+            "Daha fazla bilgi için:\nhttps://github.com/vix-4800/waypaper"
         )
 
         self.msg_arg_help = "programın sürümünü yazdır"

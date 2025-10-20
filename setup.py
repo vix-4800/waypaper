@@ -13,10 +13,10 @@ version = version.group(1)
 
 setuptools.setup(
     name="waypaper",
-    author="Roman Anufriev",
-    author_email="anufriev.roman@protonmail.com",
-    url="https://github.com/anufrievroman/waypaper",
-    description="GUI wallpaper setter for Wayland",
+    author="vix-4800",
+    author_email="",
+    url="https://github.com/vix-4800/waypaper",
+    description="GUI wallpaper setter for Wayland (fork with swaylock sync)",
     long_description=Path(setup_dir, "README.md").open().read(),
     long_description_content_type="text/markdown",
     license="GPL",
